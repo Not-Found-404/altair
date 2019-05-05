@@ -1,0 +1,51 @@
+.layout {
+  height: 100%;
+  width: 100%;
+  /* display: flex;
+  flex-direction: row; */
+}
+.layout-main {
+  height: 100%;
+  width: 100%;
+  background: '#fff';
+  padding: 1.3em;
+  overflow-y: auto;
+}
+.layout-sider {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.layout-header{
+  z-index: 1;
+  box-shadow: 0 1px 4px rgba(0,21,41,.08);
+}
+.sider-content{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.layout-sider__menu {
+  overflow-y: auto;
+}
+.logo {
+  color: #fff;
+}
+.trigger {
+  font-size: 18px;
+  line-height: 64px;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: color .3s;
+}
+.trigger:hover {
+  color: #1890ff;
+}
+.logo {
+  height: 32px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(255, 255, 255, .2);
+  margin: 16px;
+}

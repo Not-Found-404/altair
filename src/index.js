@@ -1,12 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+// 国际化处理
+import { LocaleProvider } from 'antd';
+import zhCN from 'antd/lib/locale-provider/zh_CN';
+import { Home } from "./view/home/home";
 import './index.css';
-import App from './App';
-import * as serviceWorker from './serviceWorker';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+class App extends React.Component {
+  render() {
+    return (
+      <div className="layout-container">
+        <Home />
+      </div>
+    );
+  }
+}
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+// 渲染函数
+ReactDOM.render(
+  <LocaleProvider locale={zhCN}>
+    {/* 国际化处理 */}
+    <App />
+  </LocaleProvider>
+  ,
+  document.getElementById('root')
+);
+
