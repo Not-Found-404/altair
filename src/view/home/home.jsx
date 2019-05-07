@@ -4,6 +4,7 @@ import {MenuLayout} from '../../component/menu/menu-layout';
 import {BrowserRouter as Router} from "react-router-dom";
 import {HomeRoute} from "../route/home.route";
 import './home.css';
+import {UserAdminService} from "../../service/user/user.admin.service";
 
 // 界面控件
 const {
@@ -15,8 +16,17 @@ export class Home extends React.Component {
     collapsed: false,
   };
 
-  componentDidMount() {
+  userAdminService = new UserAdminService();
 
+  componentDidMount() {
+    this.userAdminService.login({
+      params: {
+        mobile: "admin",
+        password: "1",
+        type: 3
+      },
+      success: (data) => {}
+    })
   }
 
   /* 展开侧边栏函数 */
