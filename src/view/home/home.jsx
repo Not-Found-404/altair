@@ -21,12 +21,12 @@ export class Home extends React.Component {
   componentDidMount() {
     this.userAdminService.login({
       params: {
-        mobile: "admin",
+        mobile: "17864293685",
         password: "1",
-        type: 3
+        type: 2
       },
       success: (data) => {}
-    })
+    });
   }
 
   /* 展开侧边栏函数 */
