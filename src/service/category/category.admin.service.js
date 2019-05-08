@@ -24,4 +24,16 @@ export class CategoryAdminService extends CategoryCommonService {
             request: request
         });
     };
+
+  /**
+   * 得到当前店铺的类目信息
+   * @param request
+   */
+  adminList = (request) => {
+    console.log('修改店铺类目');
+    this.get({
+      url: '/api/admin/shop/category/category/list',
+      request: request
+    });
+  };
 }
