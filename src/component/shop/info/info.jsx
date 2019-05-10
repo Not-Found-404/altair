@@ -1,6 +1,6 @@
 import React from 'react';
-import classnames from 'classnames';
-import { Card, Row, Col, Select, Form, Button, Input } from 'antd';
+import classnames from 'classnames'; // className 操作库
+import { Card, Row, Col, Select, Form, Button, Input, Switch } from 'antd';
 import './info.css';
 
 export class ShopInfo extends React.Component {
@@ -9,102 +9,105 @@ export class ShopInfo extends React.Component {
   }
 
   render() {
+
+    // 获取表单属性组件-解构
+    const { getFieldDecorator } = this.props.form;
+
     return (
       <div>
-        <Card title="店铺信息" className="card-layout">
+        <Card
+          title="店铺信息" className="card-layout"
+          extra={<OperationAction />}
+        >
           <div className='info-layout'>
-            <Row gutter="{ xs: 8, sm: 16, md: 24}">
+            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
               <Col span={12}>
-                <div className="info-content">
-                  <div className="info-title info-content__font">
-                    店铺ID：
-                  </div>
-                  <div className="info-text info-content__font">
-                    564123188652611551
-                  </div>
-                </div>
-              </Col>
-
-              <Col span={12}>
-                <Form.Item className="form-content" label="店名">
-                  <Input placeholder="店名" value="赵小姐的店" />
+                <Form.Item className="form-content" label="店铺 ID">
+                  {getFieldDecorator('shopId')(
+                    <Input readOnly className="form-content__input" placeholder="店铺 ID" />
+                  )}
                 </Form.Item>
               </Col>
 
               <Col span={12}>
-                <div className="info-content">
-                  <div className="info-title info-content__font">
-                    卖家ID：
-                  </div>
-                  <div className="info-text info-content__font">
-                    6511600666
-                  </div>
-                </div>
+                <Form.Item className="form-content" label="店名">
+                  {getFieldDecorator('shopName')(
+                    <Input placeholder="店名" />
+                  )}
+                </Form.Item>
               </Col>
 
               <Col span={12}>
-                <div className="info-content">
-                  <div className="info-title info-content__font">
-                    卖家名：
-                  </div>
-                  <div className="info-text info-content__font">
-                    赵小姐
-                  </div>
-                </div>
+                <Form.Item className="form-content" label="卖家 ID">
+                  {getFieldDecorator('userId')(
+                    <Input readOnly className="form-content__input" placeholder="卖家 ID" />
+                  )}
+                </Form.Item>
+              </Col>
+
+              <Col span={12}>
+                <Form.Item className="form-content" label="卖家名">
+                  {getFieldDecorator('userName')(
+                    <Input readOnly className="form-content__input" placeholder="卖家名" />
+                  )}
+                </Form.Item>
               </Col>
 
               <Col span={12}>
                 <Form.Item className="form-content" label="联系电话">
-                  <Input className="form-content__input" placeholder="联系电话" value="17864293685" />
+                  {getFieldDecorator('mobileNumber')(
+                    <Input placeholder="联系电话" />
+                  )}
                 </Form.Item>
               </Col>
 
               <Col span={12}>
                 <Form.Item className="form-content" label="邮箱">
-                  <Input placeholder="邮箱" value="taobillows@163.com" />
+                  {getFieldDecorator('email')(
+                    <Input placeholder="邮箱" />
+                  )}
                 </Form.Item>
               </Col>
 
               <Col span={12}>
-                <div className="info-content">
-                  <div className="info-title info-content__font">
-                    创建时间：
-                  </div>
-                  <div className="info-text info-content__font">
-                    2019.10.1 12:56:23
-                  </div>
-                </div>
+                <Form.Item className="form-content" label="创建时间">
+                  {getFieldDecorator('createdAt')(
+                    <Input readOnly className="form-content__input" placeholder="创建时间" />
+                  )}
+                </Form.Item>
               </Col>
 
               <Col span={12}>
-                <div className="info-content">
-                  <div className="info-title info-content__font">
-                    店铺状态:
-                  </div>
-                  <div className="info-text info-content__font">
-                    停业
-                  </div>
-                </div>
+                <Form.Item className="form-content" label="店铺状态">
+                  {getFieldDecorator('status')(
+                    <Input readOnly className="form-content__input" placeholder="店铺状态" />
+                  )}
+                </Form.Item>
               </Col>
 
               <Col span={24}>
                 <Form.Item className="form-content" label="店铺地址">
-                  <Input placeholder="地址" value="中国山东省青岛市黄岛区薛家岛街道嘉陵江东路777号青岛理工大学七公寓" />
+                  {getFieldDecorator('address')(
+                    <Input className="form-content__input-address" placeholder="地址" />
+                  )}
                 </Form.Item>
               </Col>
 
               <Col span={12}>
                 <Form.Item className="form-content" label="店铺标签">
-                  <Select
-                    mode="multiple"
-                    style={{ width: '100%' }}
-                    placeholder="请选择店铺标签"
-                    defaultValue={['a10', 'c12']}
-                  >
-                  </Select>
+                  {getFieldDecorator('shopTagList',
+                    {
+                      valuePropName: 'checked' // 定义子节点的值的属性
+                    })(
+                      <Select
+                        mode="multiple"
+                        style={{ width: '100%' }}
+                        placeholder="请选择店铺标签"
+                      >
+                      </Select>
+                    )}
                 </Form.Item>
               </Col>
-
 
               <Col span={24}>
                 <div className="info-image-container">
@@ -121,3 +124,26 @@ export class ShopInfo extends React.Component {
     );
   }
 }
+
+/**
+ * 店铺操作组件
+ * @param {any} props - 组件参数
+ * @author BillowsTao
+ */
+function OperationAction(props) {
+  return (
+    <div className="action-container">
+      <div className="action-switch">
+        <span className="action-switch__title">店铺状态:</span>
+        <Switch />
+      </div>
+      <Button type="primary">编辑</Button>
+    </div>
+  );
+}
+
+/**
+ * 创建包装的类
+ * @author BillowsTao
+ */
+ShopInfo = Form.create({ name: 'shop_maintenance' })(ShopInfo);
