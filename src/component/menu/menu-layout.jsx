@@ -16,7 +16,7 @@ export class MenuLayout extends React.Component {
         <SubMenu key="sub1" title={<span><Icon type="user" /><span>店铺</span></span>}>
           <Menu.Item key="1">
             {/* 路由链接 */}
-            <Link to="/">我的店铺</Link>
+            <Link to="/shopInfo">我的店铺</Link>
           </Menu.Item>
         </SubMenu>
         <SubMenu key="sub2" title={<span><Icon type="shop" /><span>商品</span></span>}>
