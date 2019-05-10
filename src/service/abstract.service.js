@@ -57,8 +57,8 @@ export class AbstractService {
             }
             this.notice(response.error);
         }
-        if (request.final && typeof request.final === "function") {
-            request.final();
+        if (request.finally && typeof request.finally === "function") {
+            request.finally();
         }
     };
 

@@ -41,6 +41,9 @@
   border-left: none;
   border-radius: unset;
 }
+.form-content__input:hover{
+  cursor: default;
+}
 .form-content__input:focus{
   box-shadow: none;
   border-bottom: 1.1px solid #1890ff;
@@ -61,4 +64,7 @@
 }
 .action-switch__title{
   margin-right: 0.3em;
+}
+.action-btn:not(:nth-of-type(1)){
+  margin-left: 0.75em;
 }
