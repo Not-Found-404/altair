@@ -27,6 +27,14 @@
   align-items: center;
   border-bottom: 1px solid #d9d9d9;
 }
+.info-content__tag{
+  padding-bottom: 0.5em;
+  width: 100%;
+  border-bottom: 1px solid #d9d9d9;
+}
+.info-content__tag:hover{
+  border-bottom: 1.1px solid #1890ff;
+}
 .form-content{
   padding-left: 1.5em;
   padding-right: 1.5em;
@@ -50,6 +58,19 @@
 }
 .form-content__input-address{
   max-width: 50em;
+}
+.form-content__input-address_blur{
+  border-top: none;
+  border-right: none;
+  border-left: none;
+  border-radius: unset;
+}
+.form-content__input-address_blur:hover{
+  cursor: default;
+}
+.form-content__input-address_blur:focus{
+  box-shadow: none;
+  border-bottom: 1.1px solid #1890ff;
 }
 .action-container{
   display: flex;

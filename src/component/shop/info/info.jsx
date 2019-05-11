@@ -1,24 +1,27 @@
 import React from 'react';
 import classnames from 'classnames'; // className 操作库
-import { Card, Row, Col, Form, Button, Input, Switch, message } from 'antd';
+import { Card, Row, Col, Form, Button, Input, Switch, message, Tag } from 'antd';
 import './info.css';
 import { ShopCommonService } from '../../../service/shop/shop.common.service';
 import { TimeUtil } from '../../../util/time.util';
 
 export class ShopInfo extends React.Component {
-
   shopService = new ShopCommonService();
 
   constructor(props) {
     super(props);
     this.state = {
       tagData: [],
-      shopEnable: true
+      shopEnable: true,
+      tagList: [],
+      viewStatus: true,
     };
 
     // 绑定 this
     this.toggleShopStatus = this.toggleShopStatus.bind(this);
     this.submitEditInfo = this.submitEditInfo.bind(this);
+    this.switchToEdit = this.switchToEdit.bind(this);
+    this.cancelEdit = this.cancelEdit.bind(this);
   }
 
   // 组件挂载钩子
@@ -60,12 +63,15 @@ export class ShopInfo extends React.Component {
           tagData: res.tagThinResponse,
           shopEnable: shopEnable
         });
-        let shopTagText;
+        let shopTagList = [];
         if (this.state.tagData.length > 0) {
-          shopTagText = this.state.tagData.map((element) => {
-            return element.name;
+          shopTagList = this.state.tagData.map((element) => {
+            return <Tag>{element.name}</Tag>;
           });
         }
+        this.setState({
+          tagList: shopTagList
+        });
         // 绑定数据
         this.props.form.setFieldsValue({
           shopId: res.shopId ? res.shopId: null,
@@ -77,7 +83,6 @@ export class ShopInfo extends React.Component {
           createdAt: res.createdAt ? TimeUtil.formatTime(res.createdAt, true) : null,
           status: shopStatus,
           address: res.address,
-          shopTagList: shopTagText,
         });
       }
     });
@@ -128,14 +133,46 @@ export class ShopInfo extends React.Component {
             }
           }
         );
+        // 退出编辑状态
+        this.setState({
+          viewStatus: true,
+        });
       }
     });
+  }
+
+  /**
+   * 切换编辑状态按钮事件
+   */
+  switchToEdit(){
+    this.setState({
+      viewStatus: false
+    });
+  }
+
+  /**
+   * 取消编辑状态
+   */
+  cancelEdit(){
+    this.setState({
+      viewStatus: true
+    });
+    this.initData();
   }
 
   render() {
 
     // 获取表单属性组件-解构
     const { getFieldDecorator } = this.props.form;
+
+    // 样式控制变量
+    let inputItemClass = classnames({
+      'form-content__input': this.state.viewStatus,
+    });
+    let inputAddressClass = classnames({
+      'form-content__input-address': true,
+      'form-content__input-address_blur': this.state.viewStatus,
+    });
 
     return (
       <div>
@@ -144,7 +181,8 @@ export class ShopInfo extends React.Component {
           extra={
             <OperationAction
               toggleShopStatus={this.toggleShopStatus} shopEnable={this.state.shopEnable}
-              submitEditInfo={this.submitEditInfo}
+              submitEditInfo={this.submitEditInfo} switchToEdit={this.switchToEdit}
+              isEditMode={!this.state.viewStatus} cancelEdit={this.cancelEdit}
             />
           }
         >
@@ -163,7 +201,7 @@ export class ShopInfo extends React.Component {
                   {getFieldDecorator('shopName',{
                     rules: [{ required: true, message: '请输入店铺名' }],
                   })(
-                    <Input placeholder="店名" />
+                    <Input readOnly={this.state.viewStatus} className={inputItemClass} placeholder="店名" />
                   )}
                 </Form.Item>
               </Col>
@@ -194,7 +232,7 @@ export class ShopInfo extends React.Component {
                       }
                     ],
                   })(
-                    <Input placeholder="联系电话" type="number" />
+                    <Input readOnly={this.state.viewStatus} className={inputItemClass} placeholder="联系电话" type="number" />
                   )}
                 </Form.Item>
               </Col>
@@ -209,7 +247,7 @@ export class ShopInfo extends React.Component {
                       }
                     ],
                   })(
-                    <Input placeholder="邮箱" />
+                    <Input readOnly={this.state.viewStatus} className={inputItemClass} placeholder="邮箱" />
                   )}
                 </Form.Item>
               </Col>
@@ -233,17 +271,20 @@ export class ShopInfo extends React.Component {
               <Col span={24}>
                 <Form.Item className="form-content" label="店铺地址">
                   {getFieldDecorator('address')(
-                    <Input className="form-content__input-address" placeholder="地址" />
+                    <Input readOnly={this.state.viewStatus} className={inputAddressClass} placeholder="地址" />
                   )}
                 </Form.Item>
               </Col>
 
               <Col span={12}>
-                <Form.Item className="form-content" label="店铺标签">
-                  {getFieldDecorator('shopTagList')(
-                    <Input readOnly className="form-content__input" placeholder="店铺标签" />
-                  )}
-                </Form.Item>
+                <div className="info-content">
+                    <span className="info-content__font info-title">
+                      店铺标签：
+                    </span>
+                    <div className="info-content__tag">
+                      {this.state.tagList}
+                    </div>
+                </div>
               </Col>
 
               <Col span={24}>
@@ -275,9 +316,9 @@ function OperationAction(props) {
         <span className="action-switch__title">店铺状态:</span>
         <Switch onChange={props.toggleShopStatus} checked={ props.shopEnable } />
       </div>
-      <Button className="action-btn" type="default">取消</Button>
-      <Button className="action-btn" type="primary" onClick={ props.submitEditInfo }>保存</Button>
-      <Button className="action-btn" type="default">编辑</Button>
+      <Button className="action-btn" style={{display: props.isEditMode ? 'inline-block' :'none'}} type="default" onClick={ props.cancelEdit }>取消</Button>
+      <Button className="action-btn" style={{display: props.isEditMode ? 'inline-block' :'none'}} type="primary" onClick={ props.submitEditInfo }>保存</Button>
+      <Button className="action-btn" style={{display: props.isEditMode ? 'none' :'inline-block'}} type="default" onClick={ props.switchToEdit }>编辑</Button>
     </div>
   );
 }
