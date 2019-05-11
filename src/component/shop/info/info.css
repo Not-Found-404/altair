@@ -89,3 +89,13 @@
 .action-btn:not(:nth-of-type(1)){
   margin-left: 0.75em;
 }
+.image-wall__item{
+  display: flex;
+  justify-content: center;
+  width: 50%;
+  height: auto;
+}
+.image-wall__img{
+  width: 100%;
+  height: 15em;
+}

@@ -292,6 +292,7 @@ export class ShopInfo extends React.Component {
                   <span className="info-title info-content__font">
                     店铺图片:
                   </span>
+                  <ImageCardWall />
                 </div>
               </Col>
 
@@ -320,6 +321,48 @@ function OperationAction(props) {
       <Button className="action-btn" style={{display: props.isEditMode ? 'inline-block' :'none'}} type="primary" onClick={ props.submitEditInfo }>保存</Button>
       <Button className="action-btn" style={{display: props.isEditMode ? 'none' :'inline-block'}} type="default" onClick={ props.switchToEdit }>编辑</Button>
     </div>
+  );
+}
+
+  /**
+ * 图片卡片墙组件
+ * @param {any} props - 组件参数
+ * @author BillowsTao
+ */
+function ImageCardWall(props){
+  return (
+    <Card>
+      <Card.Grid className="image-wall__item">
+        <img
+          className="image-wall__img" alt="shopImg"
+          src="https://img.meituan.net/msmerchant/c73f76b2db57e7ed065e0ab291fab11c1645016.jpg"
+        />
+      </Card.Grid>
+      <Card.Grid className="image-wall__item">
+        <img
+          className="image-wall__img" alt="shopImg"
+          src="https://img.meituan.net/msmerchant/44e70263cf113adf690ae8e8353a5ded664206.jpg"
+        />
+      </Card.Grid>
+      <Card.Grid className="image-wall__item">
+        <img
+          className="image-wall__img" alt="shopImg"
+          src="https://img.meituan.net/msmerchant/a0619d55f3b7857b4ceb92683643c49f1794215.jpg"
+        />
+      </Card.Grid>
+      <Card.Grid className="image-wall__item">
+        <img
+          className="image-wall__img" alt="shopImg"
+          src="https://img.meituan.net/msmerchant/a919189667ba2d5942ce6e668180e10f702520.jpg"
+        />
+      </Card.Grid>
+      <Card.Grid className="image-wall__item">
+        <img
+          className="image-wall__img" alt="shopImg"
+          src="https://img.meituan.net/msmerchant/a919189667ba2d5942ce6e668180e10f702520.jpg"
+        />
+      </Card.Grid>
+    </Card>
   );
 }
 
