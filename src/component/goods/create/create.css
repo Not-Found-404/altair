@@ -1,0 +1,7 @@
+.form-content{
+  padding-left: 1.5em;
+  padding-right: 1.5em;
+}
+.card-layout:not(:nth-of-type(1)){
+  margin-top: 1em;
+}
