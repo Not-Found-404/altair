@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames'; // className 操作库
-import { Card, Row, Col, Form, Button, Input, Switch, message, Tag } from 'antd';
+import { Card, Row, Col, Form, Button, Input, Switch, message, Tag, Upload } from 'antd';
 import './info.css';
 import { ShopCommonService } from '../../../service/shop/shop.common.service';
 import { TimeUtil } from '../../../util/time.util';
@@ -15,6 +15,7 @@ export class ShopInfo extends React.Component {
       shopEnable: true,
       tagList: [],
       viewStatus: true,
+      imageGallery: []
     };
 
     // 绑定 this
@@ -83,6 +84,12 @@ export class ShopInfo extends React.Component {
           createdAt: res.createdAt ? TimeUtil.formatTime(res.createdAt, true) : null,
           status: shopStatus,
           address: res.address,
+        });
+        // 装载图片数据
+        let imageGalleryList = [];
+        imageGalleryList.push(res.imageUrl);
+        this.setState({
+          imageGallery: imageGalleryList
         });
       }
     });
@@ -292,7 +299,9 @@ export class ShopInfo extends React.Component {
                   <span className="info-title info-content__font">
                     店铺图片:
                   </span>
-                  <ImageCardWall />
+                  <ImageCardWall
+                    imageGallery={this.state.imageGallery} isEditMode={!this.state.viewStatus}
+                  />
                 </div>
               </Col>
 
@@ -330,40 +339,57 @@ function OperationAction(props) {
  * @author BillowsTao
  */
 function ImageCardWall(props){
-  return (
-    <Card>
+  let imageGallery = [];
+  props.imageGallery.forEach((element)=>{
+    imageGallery.push(
       <Card.Grid className="image-wall__item">
         <img
           className="image-wall__img" alt="shopImg"
-          src="https://img.meituan.net/msmerchant/c73f76b2db57e7ed065e0ab291fab11c1645016.jpg"
+          src={element}
         />
       </Card.Grid>
-      <Card.Grid className="image-wall__item">
-        <img
-          className="image-wall__img" alt="shopImg"
-          src="https://img.meituan.net/msmerchant/44e70263cf113adf690ae8e8353a5ded664206.jpg"
-        />
-      </Card.Grid>
-      <Card.Grid className="image-wall__item">
-        <img
-          className="image-wall__img" alt="shopImg"
-          src="https://img.meituan.net/msmerchant/a0619d55f3b7857b4ceb92683643c49f1794215.jpg"
-        />
-      </Card.Grid>
-      <Card.Grid className="image-wall__item">
-        <img
-          className="image-wall__img" alt="shopImg"
-          src="https://img.meituan.net/msmerchant/a919189667ba2d5942ce6e668180e10f702520.jpg"
-        />
-      </Card.Grid>
-      <Card.Grid className="image-wall__item">
-        <img
-          className="image-wall__img" alt="shopImg"
-          src="https://img.meituan.net/msmerchant/a919189667ba2d5942ce6e668180e10f702520.jpg"
-        />
-      </Card.Grid>
-    </Card>
-  );
+    );
+  });
+
+  if(props.isEditMode){
+    // 编辑模式
+    return (
+      null
+    );
+
+  } else {
+    // 预览模式
+    return (
+      <Card>
+        {imageGallery}
+        {/* <Card.Grid className="image-wall__item">
+          <img
+            className="image-wall__img" alt="shopImg"
+            src="https://img.meituan.net/msmerchant/c73f76b2db57e7ed065e0ab291fab11c1645016.jpg"
+          />
+        </Card.Grid>
+        <Card.Grid className="image-wall__item">
+          <img
+            className="image-wall__img" alt="shopImg"
+            src="https://img.meituan.net/msmerchant/44e70263cf113adf690ae8e8353a5ded664206.jpg"
+          />
+        </Card.Grid>
+        <Card.Grid className="image-wall__item">
+          <img
+            className="image-wall__img" alt="shopImg"
+            src="https://img.meituan.net/msmerchant/a0619d55f3b7857b4ceb92683643c49f1794215.jpg"
+          />
+        </Card.Grid>
+        <Card.Grid className="image-wall__item">
+          <img
+            className="image-wall__img" alt="shopImg"
+            src="https://img.meituan.net/msmerchant/a919189667ba2d5942ce6e668180e10f702520.jpg"
+          />
+        </Card.Grid> */}
+      </Card>
+    );
+  }
+
 }
 
 /**
