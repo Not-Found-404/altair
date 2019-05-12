@@ -122,11 +122,7 @@ export class OrderManage extends Component {
         this.setState({
           data: result.data,
           pageTotal: result.total,
-          pageNo:pageNo
-        })
-      },
-      final: () => {
-        this.setState({
+          pageNo:pageNo,
           loading: false
         })
       }
