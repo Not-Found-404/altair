@@ -65,6 +65,37 @@ export class GoodsCreate extends React.Component {
         <Card
           className="card-layout" title="属性信息"
         >
+          <Row type="flex" justify="center" gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+            <Col span={24}>
+              <div className="property-container">
+                <div className="property-header">
+                  <div className="property-header__text-container">
+                    <span className="property-header__text property-header__text-1">属性名</span>
+                    <span className="property-header__text property-header__text-2">内容</span>
+                  </div>
+                  <div className="property-header__action">
+                    <Button className="property-header__btn" icon="plus">新建</Button>
+                  </div>
+
+                </div>
+                <div className="property-content">
+                  <div className="property-item">
+                    <div className="property-item__name">
+                      <Input placeholder="请输入属性名" />
+                    </div>
+                    <div className="property-item__content">
+                      <div>
+                        <Input placeholder="Basic usage" />
+                      </div>
+                    </div>
+                    <div className="property-item__action">
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Col>
+          </Row>
 
         </Card>
       </div>
