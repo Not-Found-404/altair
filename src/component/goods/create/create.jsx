@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames'; // className 操作库
-import { Card, Row, Col, Form, Select, Button, Input, Switch, message, Tag, Upload } from 'antd';
+import { Card, Row, Col, Form, Select, Button, Input, Switch, message, Icon } from 'antd';
 import './create.css';
 
 export class GoodsCreate extends React.Component {
@@ -80,17 +80,69 @@ export class GoodsCreate extends React.Component {
                 </div>
                 <div className="property-content">
                   <div className="property-item">
+                    {/* 属性名 */}
                     <div className="property-item__name">
                       <Input placeholder="请输入属性名" />
                     </div>
+                    {/* 属性内容 */}
                     <div className="property-item__content">
-                      <div>
-                        <Input placeholder="Basic usage" />
+                       {/* 属性内容-条目 */}
+                      <div className="property-subitem">
+                        <div className="property-subitem__content">
+                          <Input className="property-subitem__input" placeholder="属性值" />
+                        </div>
+                        <div className="property-subitem__action">
+                          <div className="property-subitem__action-item property-item__action-delete">
+                            <Icon type="close-circle" />
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <div className="property-item__action">
+                      {/* 属性内容-条目 */}
+                      <div className="property-subitem">
+                        <div className="property-subitem__content">
+                          <Input className="property-subitem__input" placeholder="属性值" />
+                        </div>
+                        <div className="property-subitem__action">
+                          <div className="property-subitem__action-item property-item__action-delete">
+                            <Icon type="close-circle" />
+                          </div>
+                        </div>
+                      </div>
+                      {/* 属性内容-条目 */}
+                      <div className="property-subitem">
+                        <div className="property-subitem__content">
+                          <Input className="property-subitem__input" placeholder="属性值" />
+                        </div>
+                        <div className="property-subitem__action">
+                          <div className="property-subitem__action-item property-item__action-delete">
+                            <Icon type="close-circle" />
+                          </div>
+                        </div>
+                      </div>
+                      {/* 属性内容-条目 */}
+                      <div className="property-subitem">
+                        <div className="property-subitem__content">
+                          <Input className="property-subitem__input" placeholder="属性值" />
+                        </div>
+                        <div className="property-subitem__action">
+                          <div className="property-subitem__action-item property-item__action-delete">
+                            <Icon type="close-circle" />
+                          </div>
+                        </div>
+                      </div>
 
                     </div>
+
+                    {/* 控制按钮区域 */}
+                    <div className="property-item__action">
+                      <div className="property-item__action-item">
+                        <Icon type="plus" />
+                      </div>
+                      <div className="property-item__action-item">
+                        <Icon type="close" />
+                      </div>
+                    </div>
+
                   </div>
                 </div>
               </div>
