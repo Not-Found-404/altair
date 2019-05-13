@@ -203,7 +203,7 @@ export class ShopInfo extends React.Component {
     );
     return (
       <div className="clearfix" style={{display: this.state.viewStatus ? "none" : "block"}}>
-        <ImgCrop width={400} height={300}>
+        {/*<ImgCrop width={400} height={300}>*/}
           <Upload
             action="/api/common/upload/image"
             listType="picture-card"
@@ -213,7 +213,7 @@ export class ShopInfo extends React.Component {
           >
             {fileList.length >= 1 ? null : uploadButton}
           </Upload>
-        </ImgCrop>
+        {/*</ImgCrop>*/}
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
           <img alt="example" style={{width: '100%'}} src={previewImage}/>
         </Modal>
