@@ -1,12 +1,14 @@
 import React from 'react';
 import classnames from 'classnames'; // className 操作库
-import { Card, Row, Col, Form, Button, Input, Switch, message, Tag, Upload } from 'antd';
+import {Card, Row, Col, Form, Button, Input, Switch, message, Tag, Upload, Icon, Modal} from 'antd';
 import './info.css';
-import { ShopCommonService } from '../../../service/shop/shop.common.service';
-import { TimeUtil } from '../../../util/time.util';
+import {TimeUtil} from '../../../util/time.util';
+import {ShopAdminService} from "../../../service/shop/shop.admin.service";
+import ImgCrop from "antd-img-crop";
+import {StringUtil} from "../../../util/string.util";
 
 export class ShopInfo extends React.Component {
-  shopService = new ShopCommonService();
+  shopService = new ShopAdminService();
 
   constructor(props) {
     super(props);
@@ -15,7 +17,12 @@ export class ShopInfo extends React.Component {
       shopEnable: true,
       tagList: [],
       viewStatus: true,
-      imageGallery: []
+      // 上传组件相关
+      previewVisible: false,
+      previewImage: '',
+      imageGallery: [],
+      fileList: [],
+      imageUrl: null
     };
 
     // 绑定 this
@@ -26,7 +33,7 @@ export class ShopInfo extends React.Component {
   }
 
   // 组件挂载钩子
-  componentDidMount(){
+  componentDidMount() {
     // 初始化数据
     this.initData();
   }
@@ -34,14 +41,14 @@ export class ShopInfo extends React.Component {
   /**
    * 初始化装载数据
    */
-  initData(){
+  initData() {
     this.shopService.shopDetail({
       success: (res) => {
         console.log(res);
         // 处理店铺状态
         let shopStatus;
         let shopEnable;
-        switch(res.status) {
+        switch (res.status) {
           case 1:
             shopStatus = '营业';
             shopEnable = true;
@@ -58,11 +65,12 @@ export class ShopInfo extends React.Component {
             shopStatus = '';
             shopEnable = false;
             break;
-        };
+        }
         // 装载店铺标签数据
         this.setState({
           tagData: res.tagThinResponse,
-          shopEnable: shopEnable
+          shopEnable: shopEnable,
+          imageUrl: res.imageUrl,
         });
         let shopTagList = [];
         if (this.state.tagData.length > 0) {
@@ -75,12 +83,12 @@ export class ShopInfo extends React.Component {
         });
         // 绑定数据
         this.props.form.setFieldsValue({
-          shopId: res.shopId ? res.shopId: null,
-          shopName: res.name ? res.name: null,
-          userId: res.userId ? res.userId: null,
-          userName: res.userName ? res.userName: null,
-          mobileNumber: res.mobile ? res.mobile: null,
-          email: res.email ? res.email: null,
+          shopId: res.shopId ? res.shopId : null,
+          shopName: res.name ? res.name : null,
+          userId: res.userId ? res.userId : null,
+          userName: res.userName ? res.userName : null,
+          mobileNumber: res.mobile ? res.mobile : null,
+          email: res.email ? res.email : null,
           createdAt: res.createdAt ? TimeUtil.formatTime(res.createdAt, true) : null,
           status: shopStatus,
           address: res.address,
@@ -98,11 +106,11 @@ export class ShopInfo extends React.Component {
   /**
    * 店铺控制开关切换
    */
-  toggleShopStatus(){
+  toggleShopStatus() {
     this.setState({
       shopEnable: !this.state.shopEnable
     });
-    this.shopService.shopDetailUpdate({
+    this.shopService.shopUpdate({
       params: {
         shopId: this.props.form.getFieldValue('shopId'),
         status: !this.state.shopEnable ? 1 : -2, // 参数传递在之前的一轮
@@ -116,20 +124,21 @@ export class ShopInfo extends React.Component {
   /**
    * 提交信息函数
    */
-  submitEditInfo(){
+  submitEditInfo() {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         // 验证通过
         let createParam = { // 传输 DTO
           shopId: values.shopId,
-          name: values.shopName ? values.shopName: null,
-          userName: values.userName ? values.userName: null,
-          mobile: values.mobileNumber ? values.mobileNumber: null,
-          email: values.email ? values.email: null,
-          address: values.address ? values.address: null,
+          name: values.shopName ? values.shopName : null,
+          userName: values.userName ? values.userName : null,
+          mobile: values.mobileNumber ? values.mobileNumber : null,
+          email: values.email ? values.email : null,
+          address: values.address ? values.address : null,
+          imageUrl: StringUtil.notEmpty(this.state.imageUrl) ? this.state.imageUrl : null
         };
         console.log('表单的数据: ', values, 'DTO:', createParam);
-        this.shopService.shopDetailUpdate(
+        this.shopService.shopUpdate(
           {
             params: createParam, // 传递数据
             success: (data) => { // 成功回调函数
@@ -151,26 +160,102 @@ export class ShopInfo extends React.Component {
   /**
    * 切换编辑状态按钮事件
    */
-  switchToEdit(){
+  switchToEdit() {
+    // 装载图片上传组件信息
+    let fileList = [];
+    let imageUrl = this.state.imageUrl;
+    if (StringUtil.notEmpty(imageUrl)) {
+      fileList = [{
+        uid: '-1',
+        // todo get real name
+        name: 'xxx.png',
+        status: 'done',
+        url: imageUrl,
+      }];
+    }
+
     this.setState({
-      viewStatus: false
+      viewStatus: false,
+      fileList: fileList
     });
+
   }
 
   /**
    * 取消编辑状态
    */
-  cancelEdit(){
+  cancelEdit() {
     this.setState({
       viewStatus: true
     });
     this.initData();
   }
 
+  /*--------------------------------------------------- 图片上传 begin --------------------------------------------------------------------*/
+  // 创建上传组件
+  getImageUpload = () => {
+    const {previewVisible, previewImage, fileList} = this.state;
+    const uploadButton = (
+      <div>
+        <Icon type="plus"/>
+        <div className="ant-upload-text">Upload</div>
+      </div>
+    );
+    return (
+      <div className="clearfix" style={{display: this.state.viewStatus ? "none" : "block"}}>
+        <ImgCrop width={400} height={300}>
+          <Upload
+            action="/api/common/upload/image"
+            listType="picture-card"
+            fileList={fileList}
+            onPreview={this.handlePreview}
+            onChange={this.handleChange}
+          >
+            {fileList.length >= 1 ? null : uploadButton}
+          </Upload>
+        </ImgCrop>
+        <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
+          <img alt="example" style={{width: '100%'}} src={previewImage}/>
+        </Modal>
+      </div>
+    );
+  };
+
+  // 处理预览取消
+  handleCancel = () => this.setState({previewVisible: false});
+
+  // 处理预览
+  handlePreview = (file) => {
+    this.setState({
+      previewImage: file.url || file.thumbUrl,
+      previewVisible: true,
+    });
+  };
+
+  // 文件改变
+  handleChange = (info) => {
+    let imageUrl = null;
+    const status = info.file.status;
+    if (status !== 'uploading') {
+      console.log("file:%o , fileList:%o", info.file, info.fileList);
+    }
+    if (status === 'done') {
+      imageUrl = info.file.response.result;
+    } else if (status === 'error') {
+      imageUrl = null;
+    }
+    this.setState({
+      fileList: info.fileList,
+      imageUrl: imageUrl
+    });
+  };
+
+  /*--------------------------------------------------- 图片上传 end --------------------------------------------------------------------*/
+
   render() {
 
     // 获取表单属性组件-解构
-    const { getFieldDecorator } = this.props.form;
+    const {getFieldDecorator} = this.props.form;
 
     // 样式控制变量
     let inputItemClass = classnames({
@@ -194,21 +279,31 @@ export class ShopInfo extends React.Component {
           }
         >
           <div className='info-layout'>
-            <Row gutter={{ xs: 8, sm: 16, md: 24, lg: 32 }}>
+            <Row gutter={{xs: 8, sm: 16, md: 24, lg: 32}}>
+              <Col span={24}>
+                <div className="info-image-container">
+                  <span className="info-title info-content__font">
+                    店铺图片:
+                  </span>
+                  <ImageCardWall
+                    imageGallery={this.state.imageGallery} isEditMode={!this.state.viewStatus}
+                  />
+                  {this.getImageUpload()}
+                </div>
+              </Col>
               <Col span={12}>
                 <Form.Item className="form-content" label="店铺 ID">
                   {getFieldDecorator('shopId')(
-                    <Input readOnly className="form-content__input" placeholder="店铺 ID" />
+                    <Input readOnly className="form-content__input" placeholder="店铺 ID"/>
                   )}
                 </Form.Item>
               </Col>
-
               <Col span={12}>
                 <Form.Item className="form-content" label="店名">
-                  {getFieldDecorator('shopName',{
-                    rules: [{ required: true, message: '请输入店铺名' }],
+                  {getFieldDecorator('shopName', {
+                    rules: [{required: true, message: '请输入店铺名'}],
                   })(
-                    <Input readOnly={this.state.viewStatus} className={inputItemClass} placeholder="店名" />
+                    <Input readOnly={this.state.viewStatus} className={inputItemClass} placeholder="店名"/>
                   )}
                 </Form.Item>
               </Col>
@@ -216,7 +311,7 @@ export class ShopInfo extends React.Component {
               <Col span={12}>
                 <Form.Item className="form-content" label="卖家 ID">
                   {getFieldDecorator('userId')(
-                    <Input readOnly className="form-content__input" placeholder="卖家 ID" />
+                    <Input readOnly className="form-content__input" placeholder="卖家 ID"/>
                   )}
                 </Form.Item>
               </Col>
@@ -224,14 +319,14 @@ export class ShopInfo extends React.Component {
               <Col span={12}>
                 <Form.Item className="form-content" label="卖家名">
                   {getFieldDecorator('userName')(
-                    <Input readOnly className="form-content__input" placeholder="卖家名" />
+                    <Input readOnly className="form-content__input" placeholder="卖家名"/>
                   )}
                 </Form.Item>
               </Col>
 
               <Col span={12}>
                 <Form.Item className="form-content" label="联系电话">
-                  {getFieldDecorator('mobileNumber',{
+                  {getFieldDecorator('mobileNumber', {
                     rules: [
                       {
                         pattern: '^(13[0-9]|14[579]|15[0-3,5-9]|16[6]|17[0135678]|18[0-9]|19[89])\\d{8}$',
@@ -239,14 +334,15 @@ export class ShopInfo extends React.Component {
                       }
                     ],
                   })(
-                    <Input readOnly={this.state.viewStatus} className={inputItemClass} placeholder="联系电话" type="number" />
+                    <Input readOnly={this.state.viewStatus} className={inputItemClass} placeholder="联系电话"
+                           type="number"/>
                   )}
                 </Form.Item>
               </Col>
 
               <Col span={12}>
                 <Form.Item className="form-content" label="邮箱">
-                  {getFieldDecorator('email',{
+                  {getFieldDecorator('email', {
                     rules: [
                       {
                         pattern: '^[a-zA-Z0-9_-]+@[a-zA-Z0-9_-]+(\\.[a-zA-Z0-9_-]+)+$',
@@ -254,7 +350,7 @@ export class ShopInfo extends React.Component {
                       }
                     ],
                   })(
-                    <Input readOnly={this.state.viewStatus} className={inputItemClass} placeholder="邮箱" />
+                    <Input readOnly={this.state.viewStatus} className={inputItemClass} placeholder="邮箱"/>
                   )}
                 </Form.Item>
               </Col>
@@ -262,7 +358,7 @@ export class ShopInfo extends React.Component {
               <Col span={12}>
                 <Form.Item className="form-content" label="创建时间">
                   {getFieldDecorator('createdAt')(
-                    <Input readOnly className="form-content__input" placeholder="创建时间" />
+                    <Input readOnly className="form-content__input" placeholder="创建时间"/>
                   )}
                 </Form.Item>
               </Col>
@@ -270,7 +366,7 @@ export class ShopInfo extends React.Component {
               <Col span={12}>
                 <Form.Item className="form-content" label="店铺状态">
                   {getFieldDecorator('status')(
-                    <Input readOnly className="form-content__input" placeholder="店铺状态" />
+                    <Input readOnly className="form-content__input" placeholder="店铺状态"/>
                   )}
                 </Form.Item>
               </Col>
@@ -278,7 +374,7 @@ export class ShopInfo extends React.Component {
               <Col span={24}>
                 <Form.Item className="form-content" label="店铺地址">
                   {getFieldDecorator('address')(
-                    <Input readOnly={this.state.viewStatus} className={inputAddressClass} placeholder="地址" />
+                    <Input readOnly={this.state.viewStatus} className={inputAddressClass} placeholder="地址"/>
                   )}
                 </Form.Item>
               </Col>
@@ -288,23 +384,11 @@ export class ShopInfo extends React.Component {
                     <span className="info-content__font info-title">
                       店铺标签：
                     </span>
-                    <div className="info-content__tag">
-                      {this.state.tagList}
-                    </div>
+                  <div className="info-content__tag">
+                    {this.state.tagList}
+                  </div>
                 </div>
               </Col>
-
-              <Col span={24}>
-                <div className="info-image-container">
-                  <span className="info-title info-content__font">
-                    店铺图片:
-                  </span>
-                  <ImageCardWall
-                    imageGallery={this.state.imageGallery} isEditMode={!this.state.viewStatus}
-                  />
-                </div>
-              </Col>
-
             </Row>
           </div>
         </Card>
@@ -324,23 +408,26 @@ function OperationAction(props) {
     <div className="action-container">
       <div className="action-switch">
         <span className="action-switch__title">店铺状态:</span>
-        <Switch onChange={props.toggleShopStatus} checked={ props.shopEnable } />
+        <Switch onChange={props.toggleShopStatus} checked={props.shopEnable}/>
       </div>
-      <Button className="action-btn" style={{display: props.isEditMode ? 'inline-block' :'none'}} type="default" onClick={ props.cancelEdit }>取消</Button>
-      <Button className="action-btn" style={{display: props.isEditMode ? 'inline-block' :'none'}} type="primary" onClick={ props.submitEditInfo }>保存</Button>
-      <Button className="action-btn" style={{display: props.isEditMode ? 'none' :'inline-block'}} type="default" onClick={ props.switchToEdit }>编辑</Button>
+      <Button className="action-btn" style={{display: props.isEditMode ? 'inline-block' : 'none'}} type="default"
+              onClick={props.cancelEdit}>取消</Button>
+      <Button className="action-btn" style={{display: props.isEditMode ? 'inline-block' : 'none'}} type="primary"
+              onClick={props.submitEditInfo}>保存</Button>
+      <Button className="action-btn" style={{display: props.isEditMode ? 'none' : 'inline-block'}} type="default"
+              onClick={props.switchToEdit}>编辑</Button>
     </div>
   );
 }
 
-  /**
+/**
  * 图片卡片墙组件
  * @param {any} props - 组件参数
  * @author BillowsTao
  */
-function ImageCardWall(props){
+function ImageCardWall(props) {
   let imageGallery = [];
-  props.imageGallery.forEach((element)=>{
+  props.imageGallery.forEach((element) => {
     imageGallery.push(
       <Card.Grid className="image-wall__item">
         <img
@@ -351,7 +438,7 @@ function ImageCardWall(props){
     );
   });
 
-  if(props.isEditMode){
+  if (props.isEditMode) {
     // 编辑模式
     return (
       null
@@ -390,10 +477,11 @@ function ImageCardWall(props){
     );
   }
 
+
 }
 
 /**
  * 创建包装的类
  * @author BillowsTao
  */
-ShopInfo = Form.create({ name: 'shop_maintenance' })(ShopInfo);
+ShopInfo = Form.create({name: 'shop_maintenance'})(ShopInfo);

@@ -20,7 +20,7 @@ export class ShopCommonService extends AbstractService {
             url: '/api/common/shop/category/list',
             request: request
         })
-    }
+    };
 
     /**
      * 获取店铺信息
@@ -31,16 +31,5 @@ export class ShopCommonService extends AbstractService {
         url: '/api/admin/shop/get',
         request: request
       });
-    }
-
-    /**
-     * 修改店铺信息
-     * @param {object} request - 请求参数
-     */
-    shopDetailUpdate = (request) => {
-      this.post({
-        url: '/api/admin/shop/update',
-        request: request
-      });
-    }
+    };
 }

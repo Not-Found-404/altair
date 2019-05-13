@@ -1,4 +1,4 @@
-import { Upload, Icon, Modal } from 'antd';
+import {Upload, Icon, Modal} from 'antd';
 import React, {Component} from 'react';
 import ImgCrop from 'antd-img-crop';
 
@@ -6,6 +6,7 @@ export class ImageUpload extends React.Component {
   state = {
     previewVisible: false,
     previewImage: '',
+    fileUrl:null,
     fileList: [{
       uid: '-1',
       name: 'xxx.png',
@@ -14,7 +15,9 @@ export class ImageUpload extends React.Component {
     }],
   };
 
-  handleCancel = () => this.setState({ previewVisible: false })
+  handleCancel = () => this.setState({
+    previewVisible: false
+  });
 
   handlePreview = (file) => {
     this.setState({
@@ -23,13 +26,26 @@ export class ImageUpload extends React.Component {
     });
   };
 
-  handleChange = ({ fileList }) => this.setState({ fileList })
+  handleChange = (info) => {
+    this.setState({
+      fileList: info.fileList
+    });
+    const status = info.file.status;
+    if (status !== 'uploading') {
+      console.log("file:%o , fileList:%o",info.file, info.fileList);
+    }
+    if (status === 'done') {
+     console.log("event: %o",info.file.response);
+    } else if (status === 'error') {
+
+    }
+  };
 
   render() {
-    const { previewVisible, previewImage, fileList } = this.state;
+    const {previewVisible, previewImage, fileList} = this.state;
     const uploadButton = (
       <div>
-        <Icon type="plus" />
+        <Icon type="plus"/>
         <div className="ant-upload-text">Upload</div>
       </div>
     );
@@ -47,8 +63,9 @@ export class ImageUpload extends React.Component {
           </Upload>
         </ImgCrop>
         <Modal visible={previewVisible} footer={null} onCancel={this.handleCancel}>
-          <img alt="example" style={{ width: '100%' }} src={previewImage} />
+          <img alt="example" style={{width: '100%'}} src={previewImage}/>
         </Modal>
+        {this.state.fileUrl}
       </div>
     );
   }

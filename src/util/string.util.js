@@ -1,0 +1,9 @@
+export class StringUtil {
+  static isEmpty = (str) => {
+    return str === null || str === "";
+  };
+
+  static notEmpty = (str) => {
+    return !this.isEmpty(str);
+  };
+}
