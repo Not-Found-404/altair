@@ -4,6 +4,7 @@ import {ItemManage} from "../../component/item/item.manage";
 import { ShopInfo } from "../../component/shop/info/info";
 import {OrderManage} from "../../component/order/order.manage";
 import {CommentPaging} from "../../component/order/comment.paging";
+import {ImageUpload} from "../../component/test/image.upload";
 
 export class HomeRoute extends React.Component {
   render() {
@@ -15,6 +16,7 @@ export class HomeRoute extends React.Component {
         <Route path="/itemManage" component={ItemManage}/>
         <Route path="/orderManage" component={OrderManage}/>
         <Route path="/commentManage" component={CommentPaging}/>
+        <Route path="/categoryCreate" component={ImageUpload}/>
       </div>
     )
   }
