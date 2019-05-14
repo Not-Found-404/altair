@@ -1,6 +1,6 @@
 export class StringUtil {
   static isEmpty = (str) => {
-    return str === null || str === "";
+    return !(str)|| str === null || str === "";
   };
 
   static notEmpty = (str) => {
