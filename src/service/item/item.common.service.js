@@ -9,7 +9,7 @@ export class ItemCommonService extends AbstractService {
     getItemInfo = (request) => {
         console.log('查看商品');
         this.get({
-            url: 'api/common/item/get',
+            url: '/api/common/item/get',
             request: request
         });
     };

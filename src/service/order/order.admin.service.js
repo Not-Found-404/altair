@@ -3,7 +3,7 @@ import {OrderCommonService} from "./order.common.service";
 export class OrderAdminService extends OrderCommonService {
     orderUpdate = (request) => {
         console.log('商家订单级更新');
-        this.get({
+        this.post({
             url: '/api/admin/order/update',
             request: request
         });
