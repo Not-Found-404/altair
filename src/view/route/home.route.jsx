@@ -6,9 +6,9 @@ import {OrderManage} from "../../component/order/order.manage";
 import {CommentPaging} from "../../component/order/comment.paging";
 import {ImageUpload} from "../../component/test/image.upload";
 import { GoodsCreate } from "../../component/goods/create/create";
+import { ShopCategoryCreate } from "../../component/shop/category/create/create";
 import {ItemEdit} from "../../component/item/item.edit";
 import {OrderReceive} from "../../component/order/order.receive";
-
 
 export class HomeRoute extends React.Component {
   render() {
@@ -20,8 +20,8 @@ export class HomeRoute extends React.Component {
         <Route path="/itemManage" component={ItemManage}/>
         <Route path="/orderManage" component={OrderManage}/>
         <Route path="/commentManage" component={CommentPaging}/>
-        <Route path="/categoryCreate" component={ImageUpload}/>
         <Route path="/goodsCreate/" component={GoodsCreate}/>
+        <Route path="/shopCategoryCreate/" component={ShopCategoryCreate}/>
         <Route path="/itemEdit/:itemId" component={ItemEdit}/>
         <Route path="/orderReceive" component={OrderReceive}/>
       </div>

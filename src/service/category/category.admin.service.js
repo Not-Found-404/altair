@@ -6,8 +6,8 @@ export class CategoryAdminService extends CategoryCommonService {
      * @param request 参数
      */
     create = (request) => {
-        console.log('創建店铺类目');
-        this.get({
+        console.log('创建店铺类目');
+        this.put({
             url: '/api/admin/shop/category/create',
             request: request
         });
