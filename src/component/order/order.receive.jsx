@@ -9,9 +9,10 @@ const {Option} = Select;
 /**
  * Created by wildhunt_unique
  */
-export class OrderManage extends Component {
+export class OrderReceive extends Component {
 
   orderAdminService = new OrderAdminService();
+
 
   componentDidMount() {
     this.setData();
@@ -54,25 +55,24 @@ export class OrderManage extends Component {
     }
   }, {
     title: '',
-    dataIndex: 'payStatus',
-    key: 'payStatus',
-    render: payStatus => {
-      if (payStatus === 1) {
-        return (
-          <span style={{"color": ColorUtil.ACTIVE}}>已付款</span>
-        )
-      } else if (payStatus === -1) {
-        return (
-          <span style={{"color": ColorUtil.IN_ACTIVE}}>未付款</span>
-        )
-      }
-    }
-  }, {
-    title: '',
     dataIndex: 'createdAt',
     key: 'createdAt',
     render: createdAt => {
       return TimeUtil.formatTime(createdAt, true);
+    }
+  }, {
+    title: '',
+    dataIndex: 'status',
+    key: 'detail',
+    render: (text, record) => {
+      return (
+        <div>
+          <a onClick={() => this.enableStatus(record, true)}>接单</a>
+          <br/>
+          <br/>
+          <a onClick={() => this.enableStatus(record, false)}>拒绝</a>
+        </div>
+      );
     }
   }, {
     title: '',
@@ -92,7 +92,7 @@ export class OrderManage extends Component {
     loading: true,
     // 查询参数
     shopIdParam: null,
-    enableStatusParam: null,
+    enableStatusParam: 0,
     payStatusParam: null,
     buyerIdParam: null,
     orderIdParam: null,
@@ -102,7 +102,7 @@ export class OrderManage extends Component {
     detailItem: []
   };
 
-  setData = (pageNo = 1, pageSize = 5) => {
+  setData = (pageNo = 1, pageSize = 8) => {
     this.setState({
       loading: true
     });
@@ -128,80 +128,25 @@ export class OrderManage extends Component {
     });
   };
 
-  getFields = () => {
-    const searchParamsInput = [];
-    searchParamsInput.push(
-      <Col span={6} key={3}>
-        <Form.Item label={`订单编号`}>
-          <Input onChange={this.inputChangeHandler} name="orderIdParam" placeholder="输入订单编号"/>
-        </Form.Item>
-      </Col>
-    );
-    searchParamsInput.push(
-      <Col span={6} key={4}>
-        <Form.Item
-          label="是否付款"
-        >
-          <Select onChange={this.selectChangeHandler} name="payStatusParam" defaultValue={null}>
-            <Option value={null}>请选择</Option>
-            <Option value={1}>已付款</Option>
-            <Option value={-1}>未付款</Option>
-          </Select>
-        </Form.Item>
-      </Col>
-    );
-    searchParamsInput.push(
-      <Col span={6} key={4}>
-        <Form.Item
-          label="是否接单"
-        >
-          <Select onChange={this.enableStatusSelectChangeHandler} name="enableStatusParam" defaultValue={null}>
-            <Option value={null}>请选择</Option>
-            <Option value={1}>已接单</Option>
-            <Option value={-1}>已拒绝</Option>
-          </Select>
-        </Form.Item>
-      </Col>
-    );
-    return searchParamsInput;
-  };
-
-  selectChangeHandler = (value) => {
-    this.setState({
-      payStatusParam: value
-    });
-  };
-
-  enableStatusSelectChangeHandler = (e) => {
-    this.setState({
-      enableStatusParam: e
+  enableStatus = (row, isReceive) => {
+    let enableStatus = isReceive ? 1 : -1;
+    this.orderAdminService.orderUpdate({
+      params: {
+        orderId: row.orderId,
+        enableStatus: enableStatus
+      },
+      success: (data) => {
+        this.setData(this.state.pageNo, this.state.pageSize);
+      }
     })
-  };
-
-  inputChangeHandler = (e) => {
-    let o = {};
-    o[e.target.name] = e.target.value;
-    this.setState(o);
   };
 
   render() {
     return (
-      <Card title="订单管理">
+      <Card title="接单">
         <Form
           className="ant-advanced-search-form"
         >
-          <Row gutter={24}>{this.getFields()}</Row>
-          <Row>
-            <Col span={24} style={{textAlign: 'right'}}>
-              <Button type="primary" onClick={() => {
-                this.setData()
-              }}>搜索</Button>
-              <Button style={{marginLeft: 8}} onClick={() => this.setData()}>
-                重置
-              </Button>
-            </Col>
-          </Row>
-          <br/>
           <Table
             columns={this.columns}
             dataSource={this.state.data}
@@ -209,7 +154,7 @@ export class OrderManage extends Component {
             pagination={{
               total: this.state.pageTotal,
               defaultCurrent: 1,
-              pageSize: 5,
+              pageSize: 8,
               current: this.state.pageNo,
               onChange: (current, pageSize) => {
                 this.pageChange(current, pageSize)
@@ -300,7 +245,7 @@ export class OrderManage extends Component {
         dataIndex: 'paidAmount',
         key: 'paidAmount',
         render: paidAmount => {
-          return "￥" + paidAmount
+          return "￥" + paidAmount;
         }
       }, {
         title: '',
@@ -308,14 +253,14 @@ export class OrderManage extends Component {
         dataIndex: 'itemAttribute',
         render: itemAttribute => {
           const view = [];
-          console.log("itemAttr:%o",itemAttribute);
-          for (let key in itemAttribute){
-           view.push(
-             <div>
-               <span>{key}</span>:
-               <span style={{marginLeft: 8}}>{itemAttribute[key]}</span>
-             </div>
-           )
+          console.log("itemAttr:%o", itemAttribute);
+          for (let key in itemAttribute) {
+            view.push(
+              <div>
+                <span>{key}</span>:
+                <span style={{marginLeft: 8}}>{itemAttribute[key]}</span>
+              </div>
+            )
           }
           return (
             <div>
@@ -392,7 +337,7 @@ export class OrderManage extends Component {
             </Col>
             <Col span={6} key={"是否接单"}>
               <Form.Item label={`接单状态`}>
-                <span>{ColorUtil.getSpan(orderInfo.enableStatus, "已接单", "已拒接", "")}</span>
+                <span>{ColorUtil.getSpan(orderInfo.enableStatus, "已接单", "已拒接", "未接单")}</span>
               </Form.Item>
             </Col>
           </Row>
@@ -404,7 +349,7 @@ export class OrderManage extends Component {
             </Col>
             <Col span={6} key={"paidAmount"}>
               <Form.Item label={`支付金额`}>
-                <span>{orderInfo.paidAmount}</span>
+                <span>{"￥" + orderInfo.paidAmount}</span>
               </Form.Item>
             </Col>
           </Row>

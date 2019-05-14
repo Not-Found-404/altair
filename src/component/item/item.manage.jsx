@@ -4,6 +4,7 @@ import {ItemAdminService} from "../../service/item/item.admin.service";
 import {ColorUtil} from "../../util/color.util";
 import {CategoryAdminService} from "../../service/category/category.admin.service";
 import {StringUtil} from "../../util/string.util";
+import {Link} from "react-router-dom";
 
 const {Option} = Select;
 
@@ -40,10 +41,10 @@ export class ItemManage extends Component {
     detailModalVisible: false
   };
 
-  setDataCurrentPage = ()=> {
+  setDataCurrentPage = () => {
     let pageNo = this.state.pageNo;
     let pageSize = this.state.pageSize;
-    this.setData(pageNo,pageSize);
+    this.setData(pageNo, pageSize);
   };
 
   setData = (pageNo = 1, pageSize = 5) => {
@@ -135,7 +136,7 @@ export class ItemManage extends Component {
     key: 'update',
     render: (text, record) => {
       return (
-        <a>编辑</a>
+        <Link to={"/itemEdit/" + record.itemId}>编辑</Link>
       )
     }
   }];
