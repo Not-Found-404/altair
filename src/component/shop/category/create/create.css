@@ -1,0 +1,15 @@
+.form-content__item{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.form-content__item-uploader{
+  padding: 0 2em;
+}
+.form-content__item-slider{
+  padding: 0 1em;
+  width: 70%;
+}
+.form-content__item-inpue{
+  width: 30%;
+}
