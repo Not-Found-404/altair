@@ -27,7 +27,7 @@ export class MenuLayout extends React.Component {
             <Link to="/itemManage/">商品管理</Link>
           </Menu.Item>
           <Menu.Item key="4">
-            <Link to="/categoryCreate/">创建类目</Link>
+            <Link to="/shopCategoryCreate/">创建类目</Link>
           </Menu.Item>
           <Menu.Item key="5">
             <Link to="/categoryManage/">管理类目</Link>
