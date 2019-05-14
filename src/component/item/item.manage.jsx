@@ -1,8 +1,9 @@
 import React, {Component} from 'react';
-import {Table, Avatar, Form, Row, Col, Input, Button, Select, Card} from 'antd';
+import {Table, Avatar, Form, Row, Col, Input, Button, Select, Card, Modal} from 'antd';
 import {ItemAdminService} from "../../service/item/item.admin.service";
 import {ColorUtil} from "../../util/color.util";
 import {CategoryAdminService} from "../../service/category/category.admin.service";
+import {StringUtil} from "../../util/string.util";
 
 const {Option} = Select;
 
@@ -34,7 +35,15 @@ export class ItemManage extends Component {
     itemIdParam: null,
     itemNameParam: null,
     categoryId: null,
-    categoryOption: []
+    categoryOption: [],
+    // 调整库存
+    detailModalVisible: false
+  };
+
+  setDataCurrentPage = ()=> {
+    let pageNo = this.state.pageNo;
+    let pageSize = this.state.pageSize;
+    this.setData(pageNo,pageSize);
   };
 
   setData = (pageNo = 1, pageSize = 5) => {
@@ -117,7 +126,7 @@ export class ItemManage extends Component {
     key: 'setInventory',
     render: (text, record) => {
       return (
-        <a>设置库存</a>
+        <a onClick={() => this.detailModalOpen(record)}>设置库存</a>
       )
     }
   }, {
@@ -241,9 +250,93 @@ export class ItemManage extends Component {
             }}
           />
         </Form>
+        {this.getAdjustModal()}
       </Card>
     )
   }
 
+  detailModalClose = () => {
+    this.setState({
+      detailModalVisible: false
+    })
+  };
 
+  detailModalOpen = (item) => {
+    this.setState({
+      detailModalVisible: true,
+      itemData: item,
+      adjustInventoryParam: item.inventory
+    });
+  };
+
+  adjustInventory = () => {
+    let inventory = this.state.adjustInventoryParam;
+    let itemData = this.state.itemData;
+    if (itemData != null) {
+      this.itemAdminService.inventoryAdjust({
+        params: {
+          inventory: StringUtil.notEmpty(inventory) ? inventory : null,
+          itemId: itemData.itemId
+        },
+        success: () => {
+          this.setDataCurrentPage();
+          this.setState({
+            detailModalVisible: false
+          })
+        }
+      })
+    }
+  };
+
+  getAdjustInventoryView = () => {
+    let itemData = this.state.itemData;
+    if (itemData != null) {
+      return (
+        <Row>
+          <Col span={13}>
+            <img width={"100%"} src={itemData.mainImage} alt=""/>
+          </Col>
+          <Col span={1}>
+          </Col>
+          <Col span={8}>
+            <Row>
+              <Col span={24}>
+                <Form.Item label={`商品`}>
+                  <span>{itemData.name}</span>
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item label={`编号`}>
+                  <span>{itemData.itemId}</span>
+                </Form.Item>
+              </Col>
+              <Col span={24}>
+                <Form.Item label={`库存`}>
+                  <Input value={this.state.adjustInventoryParam} onChange={this.inputChangeHandler}
+                         name="adjustInventoryParam" placeholder="设置库存"/>
+                </Form.Item>
+              </Col>
+            </Row>
+          </Col>
+        </Row>
+      )
+    }
+  };
+
+  getAdjustModal = () => {
+    return (
+      <Modal
+        visible={this.state.detailModalVisible}
+        title="设置库存"
+        onCancel={this.detailModalClose}
+        width="550px"
+        footer={[
+          <Button key="back" type="primary" onClick={this.adjustInventory}>保存</Button>,
+          <Button key="back" onClick={this.detailModalClose}>取消</Button>
+        ]}
+      >
+        {this.getAdjustInventoryView()}
+      </Modal>
+    );
+  }
 }
