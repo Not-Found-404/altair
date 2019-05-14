@@ -1,6 +1,6 @@
 import React from 'react';
 import classnames from 'classnames'; // className 操作库
-import {Card, Row, Col, Form, Select, Button, Input, Switch, message, Tag, Upload} from 'antd';
+import {Card, Row, Col, Form, Select, Button, Input, Switch, message, Tag, Upload, Icon} from 'antd';
 import './create.css';
 
 export class GoodsCreate extends React.Component {
@@ -16,11 +16,10 @@ export class GoodsCreate extends React.Component {
     },
 
     attributeList: [
-      {
-        name: "",
-        value: []
-      }
-      // attributeListElement
+      // {
+      //   name: "",
+      //   value: []
+      // }
     ]
   };
 
@@ -38,22 +37,28 @@ export class GoodsCreate extends React.Component {
 
   getAttributeInput = () => {
     let attributeList = this.state.attributeList;
-    console.log(attributeList);
     const view = [];
     for (let i = 0; i < attributeList.length; i++) {
       let name = attributeList[i].name;
       view.push(
-        <div className="property-content">
-          <div className="property-item">
-            <div className="property-item__name">
-              <Input onChange={this.inputChangeHandler} value={this.state[name]} name={name}
-                     placeholder="请输入属性名"/>
-            </div>
+        <div className="property-item">
+          {/* 属性名 */}
+          <div className="property-item__name">
+            <Input placeholder="请输入属性名" onChange={this.inputChangeHandler} value={this.state[name]} name={name}/>
+          </div>
+          {/* 属性内容 */}
+          <div className="property-item__content">
             {this.getAttributeValueInput(attributeList[i].value)}
-            <div className="property-item__action">
-              <Button className="property-header__btn" icon="plus"
-                      onClick={() => this.addAttributeValue(attributeList,i)}>
-              </Button>
+          </div>
+
+          {/* 控制按钮区域 */}
+          <div className="property-item__action">
+            <div className="property-item__action-item" onClick={() => this.addAttributeValue(attributeList, i)}>
+              <Icon type="plus"/>
+            </div>
+            <div className="property-item__action-item"
+                 onClick={() => {}}>
+              <Icon type="close"/>
             </div>
           </div>
         </div>
@@ -62,14 +67,20 @@ export class GoodsCreate extends React.Component {
     return view;
   };
 
-  getAttributeValueInput = (value, i) => {
+  getAttributeValueInput = (value) => {
     const view = [];
     for (let i = 0; i < value.length; i++) {
-      let name = this.getName();
+      let name = value[i].name;
       view.push(
-        <div className="property-item__content">
-          <div>
-            <Input placeholder="Basic usage" name={name} onChange={this.inputChangeHandler} value={this.state[name]}/>
+        <div className="property-subitem">
+          <div className="property-subitem__content">
+            <Input className="property-subitem__input" placeholder="属性值" onChange={this.inputChangeHandler}
+                   value={this.state[name]} name={name}/>
+          </div>
+          <div className="property-subitem__action">
+            <div className="property-subitem__action-item property-item__action-delete">
+              <Icon type="close-circle"/>
+            </div>
           </div>
         </div>
       );
@@ -146,15 +157,23 @@ export class GoodsCreate extends React.Component {
                     <Button className="property-header__btn" icon="plus" onClick={() => this.addAttribute()}>新建</Button>
                   </div>
                 </div>
-                {this.getAttributeInput()}
+                <div className="property-content">
+                  {this.getAttributeInput()}
+                </div>
               </div>
             </Col>
           </Row>
         </Card>
         <br/>
-        <Button type={"primary"}>创建商品</Button>
+        <Button type={"primary"} onClick={() => this.submitCreateItem()}>创建商品</Button>
       </div>
     );
+  };
+
+  submitCreateItem = () => {
+    let attributeList = this.state.attributeList;
+    console.log(attributeList);
+    return undefined;
   };
 
   addAttribute = () => {
@@ -168,16 +187,16 @@ export class GoodsCreate extends React.Component {
     })
   };
 
-  addAttributeValue = (attributeList,i) => {
+  addAttributeValue = (attributeList, i) => {
     attributeList[i].value.push(
       {
         name: this.getName()
       }
     );
     this.setState({
-      attributeList:attributeList
+      attributeList: attributeList
     })
-  }
+  };
 }
 
 /**
