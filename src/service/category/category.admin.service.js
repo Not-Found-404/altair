@@ -19,7 +19,7 @@ export class CategoryAdminService extends CategoryCommonService {
      */
     update = (request) => {
         console.log('修改店铺类目');
-        this.get({
+        this.post({
             url: '/api/admin/shop/category/update',
             request: request
         });
@@ -30,7 +30,7 @@ export class CategoryAdminService extends CategoryCommonService {
    * @param request
    */
   adminList = (request) => {
-    console.log('修改店铺类目');
+    console.log('查询店铺类目');
     this.get({
       url: '/api/admin/shop/category/category/list',
       request: request
