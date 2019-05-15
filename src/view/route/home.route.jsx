@@ -9,6 +9,7 @@ import { GoodsCreate } from "../../component/goods/create/create";
 import { ShopCategoryCreate } from "../../component/shop/category/create/create";
 import {ItemEdit} from "../../component/item/item.edit";
 import {OrderReceive} from "../../component/order/order.receive";
+import {CategoryManage} from "../../component/shop/category/manage/category.manage";
 
 export class HomeRoute extends React.Component {
   render() {
@@ -22,6 +23,7 @@ export class HomeRoute extends React.Component {
         <Route path="/commentManage" component={CommentPaging}/>
         <Route path="/goodsCreate/" component={GoodsCreate}/>
         <Route path="/shopCategoryCreate/" component={ShopCategoryCreate}/>
+        <Route path="/categoryManage" component={CategoryManage}/>
         <Route path="/itemEdit/:itemId" component={ItemEdit}/>
         <Route path="/orderReceive" component={OrderReceive}/>
       </div>

@@ -68,6 +68,7 @@ export class ShopCategoryCreate extends React.Component {
           params: createParam, // 传递数据
           success: (data) => { // 成功回调函数
             message.success('成功添加店铺类目');
+            this.props.history.push('/categoryManage');
           },
           final: () => {
             // 重置表单状态
