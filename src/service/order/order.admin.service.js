@@ -9,6 +9,14 @@ export class OrderAdminService extends OrderCommonService {
         });
     };
 
+  paymentPaging = (request) => {
+    console.log('支付单分页');
+    this.get({
+      url: '/api/admin/order/payment/paging',
+      request: request
+    });
+  };
+
     /**
      * 订单分页
      * @param request 参数
