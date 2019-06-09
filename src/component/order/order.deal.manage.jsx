@@ -9,7 +9,7 @@ const {Option} = Select;
 /**
  * Created by wildhunt_unique
  */
-export class OrderManage extends Component {
+export class OrderDeal extends Component {
 
   orderAdminService = new OrderAdminService();
 
@@ -79,6 +79,17 @@ export class OrderManage extends Component {
     dataIndex: 'status',
     key: 'detail',
     render: (text, record) => {
+      if (record.payStatus === 1) {
+        return (
+          <a onClick={() => this.completeOrder(record.orderId)}>完成订单</a>
+        );
+      }
+    }
+  }, {
+    title: '',
+    dataIndex: 'status',
+    key: 'detail',
+    render: (text, record) => {
       return (
         <a onClick={() => this.detailModalOpen(record.orderId)}>查看详情</a>
       );
@@ -107,11 +118,8 @@ export class OrderManage extends Component {
       loading: true
     });
     let searchParam = {
-      orderId: this.state.orderIdParam,
-      shopId: this.state.shopIdParam,
-      enableStatus: this.state.enableStatusParam,
-      payStatus: this.state.payStatusParam,
-      buyerId: this.state.buyerIdParam,
+      enableStatus: 1,
+      receiveStatus: -1,
       pageSize: pageSize,
       pageNo: pageNo
     };
@@ -190,18 +198,6 @@ export class OrderManage extends Component {
         <Form
           className="ant-advanced-search-form"
         >
-          <Row gutter={24}>{this.getFields()}</Row>
-          <Row>
-            <Col span={24} style={{textAlign: 'right'}}>
-              <Button type="primary" onClick={() => {
-                this.setData()
-              }}>搜索</Button>
-              <Button style={{marginLeft: 8}} onClick={() => this.setData()}>
-                重置
-              </Button>
-            </Col>
-          </Row>
-          <br/>
           <Table
             columns={this.columns}
             dataSource={this.state.data}
@@ -308,14 +304,14 @@ export class OrderManage extends Component {
         dataIndex: 'itemAttribute',
         render: itemAttribute => {
           const view = [];
-          console.log("itemAttr:%o",itemAttribute);
-          for (let key in itemAttribute){
-           view.push(
-             <div>
-               <span>{key}</span>:
-               <span style={{marginLeft: 8}}>{itemAttribute[key]}</span>
-             </div>
-           )
+          console.log("itemAttr:%o", itemAttribute);
+          for (let key in itemAttribute) {
+            view.push(
+              <div>
+                <span>{key}</span>:
+                <span style={{marginLeft: 8}}>{itemAttribute[key]}</span>
+              </div>
+            )
           }
           return (
             <div>
@@ -445,5 +441,16 @@ export class OrderManage extends Component {
       pageNo: current
     });
     this.setData(current, pageSize);
+  };
+
+  completeOrder = (orderId) => {
+    this.orderAdminService.orderUpdate({
+      params: {
+        orderId: orderId,
+        receiveStatus: 0,
+      }, success: (data) => {
+        this.setData(this.state.pageNo, this.state.pageSize);
+      }
+    });
   }
 }

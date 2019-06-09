@@ -20,14 +20,14 @@ export class Home extends React.Component {
   userAdminService = new UserAdminService();
 
   componentDidMount() {
-    // this.userAdminService.login({
-    //   params: {
-    //     mobile: "17864293685",
-    //     password: "1",
-    //     type: 2
-    //   },
-    //   success: (data) => {}
-    // });
+    this.userAdminService.login({
+      params: {
+        mobile: "17866668888",
+        password: "1",
+        type: 2
+      },
+      success: (data) => {}
+    });
     this.userAdminService.getUserInfo({
       params: {},
       success: (data) => {

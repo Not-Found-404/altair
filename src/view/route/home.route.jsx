@@ -11,6 +11,7 @@ import {ItemEdit} from "../../component/item/item.edit";
 import {OrderReceive} from "../../component/order/order.receive";
 import {CategoryManage} from "../../component/shop/category/manage/category.manage";
 import {PaymentManage} from "../../component/order/payment.manage";
+import {OrderDeal} from "../../component/order/order.deal.manage";
 
 export class HomeRoute extends React.Component {
   render() {
@@ -28,6 +29,7 @@ export class HomeRoute extends React.Component {
         <Route path="/itemEdit/:itemId" component={ItemEdit}/>
         <Route path="/orderReceive" component={OrderReceive}/>
         <Route path="/paymentManage" component={PaymentManage}/>
+        <Route path="/dealOrder" component={OrderDeal}/>
       </div>
     )
   }

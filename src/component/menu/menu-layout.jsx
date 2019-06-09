@@ -38,8 +38,11 @@ export class MenuLayout extends React.Component {
           <Menu.Item key="orderReceive">
             <Link to="/orderReceive/">接单</Link>
           </Menu.Item>
+          <Menu.Item key="dealOrder">
+            <Link to="/dealOrder/">订单处理</Link>
+          </Menu.Item>
           <Menu.Item key="6">
-            <Link to="/orderManage/">订单管理</Link>
+            <Link to="/orderManage/">全部订单</Link>
           </Menu.Item>
           <Menu.Item key="paymentManage">
             <Link to="/paymentManage/">支付单</Link>
